@@ -44,7 +44,7 @@ module "globalvars" {
 resource "aws_instance" "my_amazon" {
   ami                         = data.aws_ami.latest_amazon_linux.id
   instance_type               = lookup(var.instance_type, var.env)
-  key_name                    = aws_key_pair.assignment1.key_name
+  key_name                    = aws_key_pair.assignment2.key_name
   vpc_security_group_ids      = [aws_security_group.Assignment1.id]
   associate_public_ip_address = false
   iam_instance_profile        = data.aws_iam_instance_profile.lab_profile.name
@@ -124,13 +124,13 @@ data "aws_iam_instance_profile" "lab_profile" {
 
 
 # Adding SSH key to Amazon EC2
-resource "aws_key_pair" "assignment1"{
+resource "aws_key_pair" "assignment2"{
   key_name   = local.name_prefix
-  public_key = file("assignment1.pub")
+  public_key = file("assignment2.pub")
 }
 
 # Security Group
-resource "aws_security_group" "Assignment1" {
+resource "aws_security_group" "Assignment2" {
   name        = "allow_ssh"
   description = "Allow inbound SSH and HTTP traffic"
   vpc_id      = data.aws_vpc.default.id
