@@ -60,17 +60,8 @@ sudo service docker start
 sudo usermod -aG docker ec2-user
 
 # Install kubectl
-sudo curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.20.0/2021-01-05/bin/linux/amd64/kubectl
-if [ $? -ne 0 ]; then
-    echo "Failed to download kubectl binary"
-    exit 1
-fi
-sudo chmod +x ./kubectl
-sudo mv ./kubectl /usr/local/bin/kubectl
-if [ $? -ne 0 ]; then
-    echo "Failed to move kubectl binary to /usr/local/bin"
-    exit 1
-fi
+
+sudo curl -o /usr/local/bin/kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.29.0/2024-01-04/bin/linux/amd64/kubectl
 
 # Install kind
 sudo curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
