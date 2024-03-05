@@ -48,7 +48,35 @@ resource "aws_instance" "my_amazon" {
   vpc_security_group_ids      = [aws_security_group.Assignment1.id]
   associate_public_ip_address = false
   iam_instance_profile        = data.aws_iam_instance_profile.lab_profile.name
-  user_data  			= file("install.sh")
+  user_data                   = <<-EOF
+#!/bin/bash
+
+# Update packages
+sudo yum update -y
+
+# Install Docker
+sudo yum install docker -y
+sudo service docker start
+sudo usermod -aG docker ec2-user
+
+# Install kubectl
+sudo curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.20.0/2021-01-05/bin/linux/amd64/kubectl
+if [ $? -ne 0 ]; then
+    echo "Failed to download kubectl binary"
+    exit 1
+fi
+sudo chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+if [ $? -ne 0 ]; then
+    echo "Failed to move kubectl binary to /usr/local/bin"
+    exit 1
+fi
+
+# Install kind
+sudo curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+sudo chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+EOF
 
   lifecycle {
     create_before_destroy = true
