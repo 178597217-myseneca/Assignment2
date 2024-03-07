@@ -60,13 +60,14 @@ sudo service docker start
 sudo usermod -aG docker ec2-user
 
 # Install kubectl
-
-sudo curl -o /usr/local/bin/kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.29.0/2024-01-04/bin/linux/amd64/kubectl
+sudo curl --silent --location -o /usr/local/bin/kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.5/2022-01-21/bin/linux/amd64/kubectl
+sudo chmod +x /usr/local/bin/kubectl
 
 # Install kind
-sudo curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
-sudo chmod +x ./kind
-sudo mv ./kind /usr/local/bin/kind
+sudo curl -sLo kind "https://kind.sigs.k8s.io/dl/v0.11.0/kind-linux-amd64"
+sudo install -o root -g root -m 0755 kind /usr/local/bin/kind
+rm -f ./kind
+
 EOF
 
   lifecycle {
