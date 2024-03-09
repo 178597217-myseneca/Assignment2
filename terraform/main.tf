@@ -37,7 +37,7 @@ locals {
 
 # Retrieve global variables from the Terraform module
 module "globalvars" {
-  source = "../modules/globalvars"
+  source = "./modules/globalvars"
 }
 
 # Reference subnet provisioned by 01-Networking 
@@ -45,30 +45,10 @@ resource "aws_instance" "my_amazon" {
   ami                         = data.aws_ami.latest_amazon_linux.id
   instance_type               = lookup(var.instance_type, var.env)
   key_name                    = aws_key_pair.assignment2.key_name
-  vpc_security_group_ids      = [aws_security_group.Assignment1.id]
+  vpc_security_group_ids      = [aws_security_group.Assignment2.id]
   associate_public_ip_address = false
   iam_instance_profile        = data.aws_iam_instance_profile.lab_profile.name
-  user_data                   = <<-EOF
-#!/bin/bash
-
-# Update packages
-sudo yum update -y
-
-# Install Docker
-sudo yum install docker -y
-sudo service docker start
-sudo usermod -aG docker ec2-user
-
-# Install kubectl
-sudo curl --silent --location -o /usr/local/bin/kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.5/2022-01-21/bin/linux/amd64/kubectl
-sudo chmod +x /usr/local/bin/kubectl
-
-# Install kind
-sudo curl -sLo kind "https://kind.sigs.k8s.io/dl/v0.11.0/kind-linux-amd64"
-sudo install -o root -g root -m 0755 kind /usr/local/bin/kind
-rm -f ./kind
-
-EOF
+  user_data  			= file("install.sh")
 
   lifecycle {
     create_before_destroy = true
@@ -92,7 +72,7 @@ resource "aws_eip" "static_eip" {
 }
 # ECR Repository Create
 resource "aws_ecr_repository" "my_repository_webapp" {
-  name                 = "webapp-repo-assignment1"
+  name                 = "webapp-repo-assignment2"
   
 
   image_scanning_configuration {
@@ -102,7 +82,7 @@ resource "aws_ecr_repository" "my_repository_webapp" {
 
 # ECR Repository Create
 resource "aws_ecr_repository" "my_repository_mysql" {
-  name                 = "mysql-repo-assignment1"
+  name                 = "mysql-repo-assignment2"
 
   image_scanning_configuration {
     scan_on_push = true
@@ -156,4 +136,3 @@ resource "aws_security_group" "Assignment2" {
     }
   )
 }
-
