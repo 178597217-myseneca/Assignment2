@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment-v2
+  namespace: webapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: employees
+  template:
+    metadata:
+      labels:
+        app: employees
+    spec:
+      containers:
+        - name: container-webapp
+          image: 892915606637.dkr.ecr.us-east-1.amazonaws.com/mysql-repo-assignment2:v2
+          ports:
+            - containerPort: 8080
+          env:
+          - name: DBPWD
+            value: athakur28
+          - name: DBUSER
+            value: root
+          - name: DBHOST
+            value: "mysql-service.sqldb.svc.cluster.local"
+          - name: DBPORT
+            value: "3306"
